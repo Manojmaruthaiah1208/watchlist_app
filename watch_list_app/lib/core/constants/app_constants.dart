@@ -4,7 +4,7 @@ sealed class AppConstants {
   static const String homeScreen = 'Home Screen';
   static const String settingsScreen = 'Settings Screen';
   static const String home = 'Home';
-  static const String watchList = 'WarchList';
+  static const String watchList = 'WatchList';
   static const String settings = 'Settings';
   static const String searchForSym = 'Search for symbols';
   

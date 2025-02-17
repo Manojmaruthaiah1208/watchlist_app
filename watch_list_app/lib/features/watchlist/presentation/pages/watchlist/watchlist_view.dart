@@ -18,6 +18,7 @@ class WatchlistView extends StatefulWidget {
 
   final List<WatchList> watchlist;
 
+
   @override
   State<WatchlistView> createState() => _WatchlistViewState();
 }
@@ -33,9 +34,9 @@ class _WatchlistViewState extends State<WatchlistView>
   void initState() {
     super.initState();
     currentIndex = bloc.selectedWatchlistIndex;
-    _tabController = TabController(
+        _tabController = TabController( 
       initialIndex: currentIndex,
-      length: AppConstants.WatchListLimit,
+      length: widget.watchlist.length,
       vsync: this,
     )..addListener(
         () {
@@ -63,95 +64,111 @@ class _WatchlistViewState extends State<WatchlistView>
     }
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    _tabController = TabController( // For Temp fix for length update
+      initialIndex: currentIndex,
+      length: widget.watchlist.length,
+      vsync: this,
+    )..addListener(
+        () {
+          if (_tabController.indexIsChanging) {
+            currentIndex = _tabController.index;
+          } else if (_tabController.index != _tabController.previousIndex) {
+            currentIndex = _tabController.index;
+            changeTab(currentIndex);
+          }
+        },
+      );
+
     return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(color: colorScheme.surfaceContainerLow),
-          height: WidgetSizes.s48,
-          width: double.infinity,
-          child: Row(
-            children: [
-              Expanded(
-                child: DefaultTabController(
-                  initialIndex: currentIndex,
-                  length: widget.watchlist.length,
-                  child: TabBar(
-                    labelStyle: theme.textTheme.labelLarge,
-                    labelColor: colorScheme.onSurface,
-                    unselectedLabelColor: colorScheme.onSurface,
-                    unselectedLabelStyle: theme.textTheme.labelSmall,
-                    dividerColor: colorScheme.surfaceContainerLow,
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    controller: _tabController,
-                    tabs: widget.watchlist.asMap().entries.map(
-                      (entry) {
-                        final e = entry.value;
-                        return Tab(
-                          child: Text('${e.watchListName}'),
-                        );
-                      },
-                    ).toList(),
+        children: [
+          Container(
+            decoration: BoxDecoration(color: colorScheme.surfaceContainerLow),
+            height: WidgetSizes.s48,
+            width: double.infinity,
+            child: Row(
+              children: [
+                Expanded(
+                  child: DefaultTabController(
+                    initialIndex: currentIndex,
+                    length: widget.watchlist.length,
+                    child: TabBar(
+                      labelStyle: theme.textTheme.labelLarge,
+                      labelColor: colorScheme.onSurface,
+                      unselectedLabelColor: colorScheme.onSurface,
+                      unselectedLabelStyle: theme.textTheme.labelSmall,
+                      dividerColor: colorScheme.surfaceContainerLow,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      controller: _tabController,
+                      tabs: widget.watchlist.asMap().entries.map(
+                        (entry) {
+                          final e = entry.value;
+                          return Tab(
+                            child: Text('${e.watchListName}'),
+                          );
+                        },
+                      ).toList(),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: widget.watchlist.asMap().entries.map(
-              (entry) {
-                final index = entry.key;
-                final e = entry.value;
-                if ((e.symbols.length) > 0) {
-                  return SymbolsListView(
-                    symbols: e.symbols ,
-                    watchlist: e.watchListName,
-                    currentIndex: index,
-                  );
-                }
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(AppConstants.noData),
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: SizedBox(
-                          width: WidgetSizes.s200,
-                          child: ActionButton(
-                            buttonState: ElevatedButtonState.active,
-                            onPressed: () {
-                              if (bloc.searchData.isNotNull) {
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (ctx) {
-                                    return BlocProvider.value(
-                                      value: bloc,
-                                      child: SearchScreen(
-                                        symbolList:
-                                            bloc.searchData?.symbols ?? [],
-                                            watchListIndex: currentIndex,
-                                      ),
-                                    );
-                                  },
-                                ));
-                              }
-                            },
-                            label: AppConstants.search,
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: widget.watchlist.asMap().entries.map(
+                (entry) {
+                  final index = entry.key;
+                  final e = entry.value;
+                  if ((e.symbols.length) > 0) {
+                    return SymbolsListView(
+                      symbols: e.symbols ,
+                      watchlist: e.watchListName,
+                      currentIndex: index,
+                    );
+                  }
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(AppConstants.noData),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: SizedBox(
+                            width: WidgetSizes.s200,
+                            child: ActionButton(
+                              buttonState: ElevatedButtonState.active,
+                              onPressed: () {
+                                if (bloc.searchData.isNotNull) {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (ctx) {
+                                      return BlocProvider.value(
+                                        value: bloc,
+                                        child: SearchScreen(
+                                          symbolList:
+                                              bloc.searchData?.symbols ?? [],
+                                              watchListIndex: currentIndex,
+                                        ),
+                                      );
+                                    },
+                                  ));
+                                }
+                              },
+                              label: AppConstants.search,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ).toList(),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ).toList(),
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
   }
 
   void changeTab(int index) {

@@ -1,14 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watch_list_app/core/constants/app_constants.dart';
 import 'package:watch_list_app/core/utils/extensions/object_extension.dart';
+import '../../../../../core/constants/storage_constants.dart';
+import '../../../../../core/constants/store.dart';
 import '../../../data/models/watchlist_model/watchlist_response.dart';
 import '../../bloc/watchlist_bloc.dart';
 import '../../bloc/watchlist_state.dart';
 import '../manage_watchlist/manage_watchlist_screen.dart';
 import 'watchlist_view.dart';
 
-class WatchlistScreen extends StatelessWidget {
+class WatchlistScreen extends StatefulWidget {
+  @override
+  State<WatchlistScreen> createState() => _WatchlistScreenState();
+}
+
+class _WatchlistScreenState extends State<WatchlistScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -43,6 +59,7 @@ class WatchlistScreen extends StatelessWidget {
         ],
       ),
       body: BlocBuilder<WatchlistBloc, WatchlistState>(
+       
         buildWhen: (previous, current) {
           return (current is WatchlistError ||
               current is WatchlistLoaded ||
@@ -53,9 +70,13 @@ class WatchlistScreen extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           } else if (state is WatchlistLoaded &&
               state.watchlistsData.isNotNull) {
+            Store().getInstance.setString(
+                watchlistData, json.encode(state.watchlistsData!.toJson()));
             watchLists = state.watchlistsData!.watchLists;
-            return WatchlistView(
+
+            return  WatchlistView(
               watchlist: state.watchlistsData!.watchLists,
+
             );
           } else if (state is WatchlistError) {
             return Center(child: Text(state.message));

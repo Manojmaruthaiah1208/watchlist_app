@@ -102,6 +102,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             BlocProvider.of<WatchlistBloc>(context).add(
                                 addSymbol(
                                     widget.watchListIndex, searchList![index]));
+                                    Navigator.pop(context);
                           }
                         },
                       ),

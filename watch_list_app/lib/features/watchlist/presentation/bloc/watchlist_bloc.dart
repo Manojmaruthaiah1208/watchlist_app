@@ -1,3 +1,4 @@
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watch_list_app/core/utils/extensions/object_extension.dart';
 import 'package:watch_list_app/features/watchlist/data/models/watchlist_model/watchlist_response.dart';
