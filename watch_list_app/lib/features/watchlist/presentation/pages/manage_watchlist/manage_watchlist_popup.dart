@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watch_list_app/core/constants/app_constants.dart';
+import 'package:watch_list_app/core/utils/extensions/object_extension.dart';
 
 import '../../../../../core/constants/widget_sizes.dart';
 import '../../../data/models/watchlist_model/watchlist_response.dart';
@@ -10,18 +11,18 @@ import '../../bloc/watchlist_event.dart';
 import '../../widgets/action_button.dart';
 import '../../widgets/vertical_scroll_bar.dart';
 
-class RenameWatchlist extends StatefulWidget {
-  const RenameWatchlist(
+class ManageWatchlistPopup extends StatefulWidget {
+  const ManageWatchlistPopup(
       {super.key, required this.renameIndex, required this.watchlist});
 
-  final int renameIndex;
+  final int? renameIndex;
   final List<WatchList> watchlist;
 
   @override
-  State<RenameWatchlist> createState() => _RenameWatchlistState();
+  State<ManageWatchlistPopup> createState() => _ManageWatchlistPopupState();
 }
 
-class _RenameWatchlistState extends State<RenameWatchlist> {
+class _ManageWatchlistPopupState extends State<ManageWatchlistPopup> {
   late final WatchlistBloc bloc = BlocProvider.of<WatchlistBloc>(context);
   late final TextEditingController editWatchController;
   final ValueNotifier<bool> showWatchErrorNotifier = ValueNotifier<bool>(false);
@@ -39,7 +40,7 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
   void initState() {
     super.initState();
     editWatchController = TextEditingController(
-        text: widget.watchlist[widget.renameIndex].watchListName);
+        text: widget.watchlist[widget.renameIndex ?? 0].watchListName);
     editWatchController.addListener(_onTextChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       renameTextField.requestFocus();
@@ -79,7 +80,7 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
                   const VerticalScrollBar(),
                   const SizedBox(height: WidgetSizes.s27),
                   Text(
-                    AppConstants.editWatchlist,
+                    AppConstants.manageWatchlist,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -95,8 +96,8 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextField(
-                                style: theme.textTheme.bodyMedium!
-                                    .copyWith(color: colorScheme.surface),
+                                style: theme.textTheme.bodyMedium!.copyWith(
+                                    color: colorScheme.inverseSurface),
                                 focusNode: renameTextField,
                                 autocorrect: false,
                                 controller: editWatchController,
@@ -129,8 +130,8 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
                                       color: colorScheme.inverseSurface),
                                   helperStyle: TextStyle(
                                       color: colorScheme.inverseSurface),
-                                  counterStyle:
-                                      TextStyle(color: colorScheme.surface),
+                                  counterStyle: TextStyle(
+                                      color: colorScheme.inverseSurface),
                                   errorStyle: const TextStyle(height: 0),
                                 ),
                                 onChanged: (value) {
@@ -188,12 +189,11 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
     );
   }
 
-
   _onEditWatchlistPressed() {
     renameTextField.unfocus();
     String currentName = editWatchController.text;
     bool nameExists = widget.watchlist.any(
-      (watchlist) => watchlist.watchListName!.trim() == currentName.trim(),
+      (watchlist) => watchlist.watchListName.trim() == currentName.trim(),
     );
 
     if (editWatchController.text.isEmpty) {
@@ -208,7 +208,7 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
         showWatchErrorNotifier.value = false;
 
         FocusScope.of(context).unfocus();
-        _renameWatchlist(currentName);
+        _ManageWatchlist(currentName);
         Navigator.pop(context);
       }
     }
@@ -221,7 +221,7 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
       children: [
         isError
             ? Row(children: [
-                 Icon(Icons.warning),
+                Icon(Icons.warning),
                 const SizedBox(
                   width: WidgetSizes.s2,
                 ),
@@ -241,7 +241,7 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
                       builder: (context, value, child) {
                         return Text(
                           '${value.text.length}/16',
-                          style: TextStyle(color: colorScheme.surface),
+                          style: TextStyle(color: colorScheme.inverseSurface),
                         );
                       },
                     ),
@@ -252,8 +252,12 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
     );
   }
 
-  void _renameWatchlist(String watchListName) {
-    bloc.add(RenameWatchEvent(watchListName,widget.renameIndex));
+  void _ManageWatchlist(String watchListName) {
+    if (widget.renameIndex.isNotNull) {
+      bloc.add(RenameWatchEvent(watchListName, widget.renameIndex ?? 0));
+    } else {
+      bloc.add(CreateWatchlist(watchListName));
+    }
   }
 
   @override
@@ -263,5 +267,4 @@ class _RenameWatchlistState extends State<RenameWatchlist> {
     editWatchController.dispose();
     super.dispose();
   }
-
 }

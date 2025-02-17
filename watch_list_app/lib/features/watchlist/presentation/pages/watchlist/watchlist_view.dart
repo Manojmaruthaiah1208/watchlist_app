@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:watch_list_app/core/utils/extensions/object_extension.dart';
+import 'package:watch_list_app/features/watchlist/presentation/pages/search/search_screen.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/widget_sizes.dart';
 import '../../../data/models/watchlist_model/watchlist_response.dart';
 import '../../bloc/watchlist_bloc.dart';
 import '../../bloc/watchlist_event.dart';
-import '../manage_watchlist/manage_watchlist_screen.dart';
+import '../../widgets/action_button.dart';
 import 'symbols_list_view.dart';
 
 class WatchlistView extends StatefulWidget {
@@ -33,7 +35,7 @@ class _WatchlistViewState extends State<WatchlistView>
     currentIndex = bloc.selectedWatchlistIndex;
     _tabController = TabController(
       initialIndex: currentIndex,
-      length: widget.watchlist.length,
+      length: AppConstants.WatchListLimit,
       vsync: this,
     )..addListener(
         () {
@@ -85,12 +87,8 @@ class _WatchlistViewState extends State<WatchlistView>
                     tabs: widget.watchlist.asMap().entries.map(
                       (entry) {
                         final e = entry.value;
-                        return GestureDetector(
-                          onLongPress: () {
-                          },
-                          child: Tab(
-                            child: Text('${e.watchListName}'),
-                          ),
+                        return Tab(
+                          child: Text('${e.watchListName}'),
                         );
                       },
                     ).toList(),
@@ -107,30 +105,52 @@ class _WatchlistViewState extends State<WatchlistView>
               (entry) {
                 final index = entry.key;
                 final e = entry.value;
-                if (e.symbolsList != null && (e.symbolsList?.length ?? 0) > 0) {
+                if ((e.symbols.length) > 0) {
                   return SymbolsListView(
-                    symbols: e.symbolsList ?? [],
-                    watchlistId: e.watchListId,
+                    symbols: e.symbols ,
                     watchlist: e.watchListName,
                     currentIndex: index,
-                    onRefreshCallback: _refreshWatchlist,
                   );
                 }
                 return Center(
-                  child: Text(AppConstants.noData),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(AppConstants.noData),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: SizedBox(
+                          width: WidgetSizes.s200,
+                          child: ActionButton(
+                            buttonState: ElevatedButtonState.active,
+                            onPressed: () {
+                              if (bloc.searchData.isNotNull) {
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (ctx) {
+                                    return BlocProvider.value(
+                                      value: bloc,
+                                      child: SearchScreen(
+                                        symbolList:
+                                            bloc.searchData?.symbols ?? [],
+                                            watchListIndex: currentIndex,
+                                      ),
+                                    );
+                                  },
+                                ));
+                              }
+                            },
+                            label: AppConstants.search,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 );
               },
             ).toList(),
           ),
         ),
       ],
-    );
-  }
-
-  Future<void> _refreshWatchlist() async {
-    // bloc.add(const WatchlistLoadEvent(true));
-    await Future.delayed(
-      const Duration(seconds: 1),
     );
   }
 

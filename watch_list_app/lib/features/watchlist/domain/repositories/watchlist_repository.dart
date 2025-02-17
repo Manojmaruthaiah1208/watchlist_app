@@ -1,10 +1,8 @@
 
 import 'package:watch_list_app/features/watchlist/data/models/watchlist_model/watchlist_response.dart';
-import '../entities/watchlist_entity.dart';
+import '../../data/models/search_model/search_model.dart';
 
 abstract class WatchlistRepository {
-  Future<WatchlistResponse> getWatchlists();
-  Future<void> addWatchlist(WatchlistEntity watchlist);
-  Future<void> updateWatchlist(WatchlistEntity watchlist);
-  Future<void> deleteWatchlist(String id);
+  Future<WatchListResponse> getWatchlists();
+  Future<SearchDataModel> getSeachlists();
 }

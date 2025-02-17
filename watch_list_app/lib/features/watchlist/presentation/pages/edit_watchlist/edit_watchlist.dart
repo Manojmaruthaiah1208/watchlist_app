@@ -220,7 +220,7 @@ class _EditWatchlistState extends State<EditWatchlist> {
     final updatedSymbols = List<SymbolDetails>.from(symbolsNotifier.value);
     updatedSymbols.removeAt(index);
     symbolsNotifier.value = updatedSymbols;
-    bloc.dataState.watchList![bloc.selectedWatchlistIndex].symbolsList =
+    bloc.dataState.watchList![bloc.selectedWatchlistIndex].symbols =
         updatedSymbols;
   }
 

@@ -11,16 +11,12 @@ class SymbolsListView extends StatelessWidget {
     super.key,
     required this.symbols,
     required this.watchlist,
-    required this.watchlistId,
     required this.currentIndex,
-    required this.onRefreshCallback,
   });
 
   final List<SymbolDetails> symbols;
   final String? watchlist;
-  final String? watchlistId;
   final int currentIndex;
-  final Future<void> Function() onRefreshCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +55,7 @@ class SymbolsListView extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                symbols[index].dispSym ?? 'tcs',
+                                symbols[index].dispSym ??'',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                     color: colorScheme.inverseSurface),
                                 overflow: TextOverflow.ellipsis,
@@ -120,16 +116,5 @@ class SymbolsListView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String formatValue(String? value) {
-    if (value == null || value.isEmpty) return '--';
-
-    final double? parsedValue = double.tryParse(value);
-    if (parsedValue == null) return '--';
-
-    return parsedValue % 1 == 0
-        ? parsedValue.toInt().toString()
-        : parsedValue.toStringAsFixed(1);
   }
 }

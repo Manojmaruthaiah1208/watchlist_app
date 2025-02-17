@@ -17,7 +17,7 @@ class WatchlistScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Watchlist'),
+        title: Text(AppConstants.watchList),
         actions: [
           TextButton(
             onPressed: () {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:watch_list_app/features/watchlist/data/models/watchlist_model/watchlist_response.dart';
+import 'package:watch_list_app/features/watchlist/presentation/pages/manage_watchlist/manage_watchlist_popup.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/widget_sizes.dart';
 import '../../bloc/watchlist_bloc.dart';
 import '../../bloc/watchlist_event.dart';
 import '../../bloc/watchlist_state.dart';
 import '../../widgets/action_button.dart';
-import 'rename_watchlist.dart';
 
 class ManageWatchlistScreen extends StatefulWidget {
   ManageWatchlistScreen({
@@ -54,10 +54,12 @@ class _ManageWatchlistScreenState extends State<ManageWatchlistScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Watchlist'),
+        title: Text(AppConstants.manageWatchlist),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              showManageWatchlistBottomSheet(null);
+            },
             child: Text(
               AppConstants.addWatchlist,
               style: theme.textTheme.bodySmall
@@ -118,14 +120,14 @@ class _ManageWatchlistScreenState extends State<ManageWatchlistScreen> {
                                         child: Icon(Icons.list),
                                       ),
                                       title: Text(
-                                        watchList[index].watchListName ??'',
+                                        watchList[index].watchListName,
                                         style:
                                             theme.textTheme.bodySmall?.copyWith(
                                           color: colorScheme.inverseSurface,
                                         ),
                                       ),
                                       subtitle: Text(
-                                        '${(watchList[index].symbolsList?.length ?? 0)} Symbols',
+                                        '${(watchList[index].symbols.length)} Symbols',
                                         style: theme.textTheme.labelSmall
                                             ?.copyWith(
                                           color: colorScheme.inverseSurface,
@@ -136,20 +138,24 @@ class _ManageWatchlistScreenState extends State<ManageWatchlistScreen> {
                                         child: Row(
                                           children: [
                                             IconButton(
-                                              icon: Icon(Icons.edit
-                                              ),
+                                              icon: Icon(Icons.edit),
                                               onPressed: () {
-                                                showEditWatchlistBottomSheet(index);
+                                                showManageWatchlistBottomSheet(
+                                                    index);
                                               },
                                             ),
                                             IconButton(
                                               icon: Icon(Icons.delete),
                                               onPressed: () {
-                                                // _deleteSymbol(index, selected);
-                                                // isSymbolDeleted = true;
-                                                // withoutSaving.value = false;
-                                                // buttonStateNotifier.value =
-                                                //     ElevatedButtonState.active;
+                                                bloc.add(
+                                                  DeleteWatchEvent(
+                                                    index,
+                                                  ),
+                                                );
+                                                isModified = true;
+                                                withoutSaving.value = false;
+                                                buttonStateNotifier.value =
+                                                    ElevatedButtonState.active;
                                               },
                                             ),
                                           ],
@@ -219,13 +225,18 @@ class _ManageWatchlistScreenState extends State<ManageWatchlistScreen> {
           } else if (state is WatchlistError) {
             return Center(child: Text(state.message));
           }
-          return Center(child: Text('No Watchlist Available'));
+          return Center(child: Text(AppConstants.noData));
         },
       ),
     );
   }
-   void showEditWatchlistBottomSheet(int renameIndex) {
+
+  void showManageWatchlistBottomSheet(int? renameIndex) {
     final watchlistBloc = BlocProvider.of<WatchlistBloc>(context);
+    isModified = true;
+    withoutSaving.value = false;
+    buttonStateNotifier.value = ElevatedButtonState.active;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -236,7 +247,7 @@ class _ManageWatchlistScreenState extends State<ManageWatchlistScreen> {
       builder: (context) {
         return BlocProvider.value(
           value: watchlistBloc,
-          child: RenameWatchlist(
+          child: ManageWatchlistPopup(
             watchlist: watchlistNotifier.value,
             renameIndex: renameIndex,
           ),

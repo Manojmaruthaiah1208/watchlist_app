@@ -1,147 +1,151 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'watchlist_response.g.dart';
 
 
-@JsonSerializable()
-class WatchlistResponse {
-  @JsonKey(name: 'watchLists')
-  final List<WatchList> watchLists;
+class WatchListResponse {
+  List<WatchList> watchLists;
 
-  WatchlistResponse({
-    required this.watchLists,
-  });
+  WatchListResponse({ required this.watchLists});
 
-  factory WatchlistResponse.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
+  factory WatchListResponse.fromJson(Map<String, dynamic> json) {
+    return WatchListResponse(
+      watchLists: (json['watchLists'] as List)
+          .map((e) => WatchList.fromJson(e))
+          .toList(),
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$DataToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'watchLists': watchLists.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
-@JsonSerializable()
 class WatchList {
-  @JsonKey(name: 'watchListName')
-   String? watchListName;
+  String watchListName;
+  List<SymbolDetails> symbols;
+  bool predefined;
 
-  @JsonKey(name: 'watchListId')
-  final String? watchListId;
+  WatchList({required this.watchListName, required this.symbols, required this.predefined});
 
-  @JsonKey(name: 'symbols')
-   List<SymbolDetails>? symbolsList;
+  factory WatchList.fromJson(Map<String, dynamic> json) {
+    return WatchList(
+      watchListName: json['watchListName'],
+      symbols: (json['symbols'] as List)
+          .map((e) => SymbolDetails.fromJson(e))
+          .toList(),
+      predefined: json['predefined'],
+    );
+  }
 
-  @JsonKey(name: 'predefined')
-  final bool predefined;
-
-  WatchList({
-    required this.watchListName,
-    this.watchListId,
-    required this.symbolsList,
-    required this.predefined,
-  });
-
-  factory WatchList.fromJson(Map<String, dynamic> json) =>
-      _$WatchListFromJson(json);
-
-  Map<String, dynamic> toJson() => _$WatchListToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'watchListName': watchListName,
+      'symbols': symbols.map((e) => e.toJson()).toList(),
+      'predefined': predefined,
+    };
+  }
 }
 
-@JsonSerializable()
 class SymbolDetails {
-  @JsonKey(name: 'symbol')
-  final String? symbol;
-
-  @JsonKey(name: 'dispSym')
-  final String? dispSym;
-
-  @JsonKey(name: 'instrument')
-  final String? instrument;
-
-  @JsonKey(name: 'baseSym')
-  final String? baseSym;
-
-  @JsonKey(name: 'companyName')
-  final String? companyName;
-
-  @JsonKey(name: 'isin')
-  final String? isin;
-
-  @JsonKey(name: 'exc')
-  final String? exc;
-
-  @JsonKey(name: 'excTkn')
-  final dynamic excTkn;
-
-  @JsonKey(name: 'series')
-  final String? series;
-
-  @JsonKey(name: 'lotSize')
-  final int? lotSize;
-
-  @JsonKey(name: 'tickSize')
-  final String? tickSize;
-
-  @JsonKey(name: 'expiryDate')
-  final String? expiryDate;
-
-  @JsonKey(name: 'optionType')
-  final String? optionType;
-
-  @JsonKey(name: 'strikePrice')
-  final dynamic strikePrice;
-
-  @JsonKey(name: 'streamSym')
-  final String? streamSym;
-
-  @JsonKey(name: 'segment')
-  final String? segment;
-
-  @JsonKey(name: 'fno')
-  final bool? fno;
-
-  @JsonKey(name: 'mtf')
-  final bool? mtf;
-
-  @JsonKey(name: 'multiplier')
-  final dynamic multiplier;
-
-  @JsonKey(name: 'freezeQty')
-  final dynamic freezeQty;
-
-  @JsonKey(name: 'tradingSymbol')
-  final String? tradingSymbol;
-
-  @JsonKey(name: 'otherExc')
-  final dynamic otherExc;
-
-  @JsonKey(name: 'isWeeklyExpiry')
-  final dynamic isWeeklyExpiry;
+  String? symbol;
+  String? dispSym;
+  String? instrument;
+  String? baseSym;
+  String? companyName;
+  String? isin;
+  String? exc;
+  int? excTkn;
+  String? series;
+  int? lotSize;
+  String? tickSize;
+  String? expiryDate;
+  String? optionType;
+  double? strikePrice;
+  String? streamSym;
+  String? segment;
+  bool? fno;
+  bool? mtf;
+  double? multiplier;
+  double? freezeQty;
+  String? tradingSymbol;
+  bool? isWeeklyExpiry;
 
   SymbolDetails({
-    this.symbol,
-    this.dispSym,
-    this.instrument,
-    this.baseSym,
-    this.companyName,
-    this.isin,
-    this.exc,
-    this.excTkn,
-    this.series,
-    this.lotSize,
-    this.tickSize,
-    this.expiryDate,
-    this.optionType,
-    this.strikePrice,
-    this.streamSym,
-    this.segment,
-    this.fno,
-    this.mtf,
-    this.multiplier,
-    this.freezeQty,
-    this.tradingSymbol,
-    this.otherExc,
-    this.isWeeklyExpiry,
+     this.symbol,
+     this.dispSym,
+     this.instrument,
+     this.baseSym,
+     this.companyName,
+     this.isin,
+     this.exc,
+     this.excTkn,
+     this.series,
+     this.lotSize,
+     this.tickSize,
+     this.expiryDate,
+     this.optionType,
+     this.strikePrice,
+     this.streamSym,
+     this.segment,
+     this.fno,
+     this.mtf,
+     this.multiplier,
+     this.freezeQty,
+     this.tradingSymbol,
+     this.isWeeklyExpiry,
   });
 
-  factory SymbolDetails.fromJson(Map<String, dynamic> json) => _$SymbolDetailsFromJson(json);
+  factory SymbolDetails.fromJson(Map<String, dynamic> json) {
+    return SymbolDetails(
+      symbol: json['symbol'],
+      dispSym: json['dispSym'],
+      instrument: json['instrument'],
+      baseSym: json['baseSym'],
+      companyName: json['companyName'],
+      isin: json['isin'],
+      exc: json['exc'],
+      excTkn: json['excTkn'],
+      series: json['series'],
+      lotSize: json['lotSize'],
+      tickSize: json['tickSize'],
+      expiryDate: json['expiryDate'],
+      optionType: json['optionType'],
+      strikePrice: json['strikePrice'],
+      streamSym: json['streamSym'],
+      segment: json['segment'],
+      fno: json['fno'],
+      mtf: json['mtf'],
+      multiplier: json['multiplier'],
+      freezeQty: json['freezeQty'],
+      tradingSymbol: json['tradingSymbol'],
+      isWeeklyExpiry: json['isWeeklyExpiry'],
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$SymbolDetailsToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'symbol': symbol,
+      'dispSym': dispSym,
+      'instrument': instrument,
+      'baseSym': baseSym,
+      'companyName': companyName,
+      'isin': isin,
+      'exc': exc,
+      'excTkn': excTkn,
+      'series': series,
+      'lotSize': lotSize,
+      'tickSize': tickSize,
+      'expiryDate': expiryDate,
+      'optionType': optionType,
+      'strikePrice': strikePrice,
+      'streamSym': streamSym,
+      'segment': segment,
+      'fno': fno,
+      'mtf': mtf,
+      'multiplier': multiplier,
+      'freezeQty': freezeQty,
+      'tradingSymbol': tradingSymbol,
+      'isWeeklyExpiry': isWeeklyExpiry,
+    };
+  }
 }

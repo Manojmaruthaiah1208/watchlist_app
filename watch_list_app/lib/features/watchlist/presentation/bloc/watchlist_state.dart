@@ -12,7 +12,7 @@ class WatchlistLoading extends WatchlistState {}
 
 // ignore: must_be_immutable
 class WatchlistLoaded extends WatchlistState {
-   WatchlistResponse? watchlistsData;
+   WatchListResponse? watchlistsData;
 
   WatchlistLoaded(this.watchlistsData);
 

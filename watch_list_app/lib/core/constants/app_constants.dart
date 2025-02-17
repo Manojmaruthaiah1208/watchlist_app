@@ -1,5 +1,13 @@
 
 sealed class AppConstants {
+  static const String watchListAapp = 'WatchList App';
+  static const String homeScreen = 'Home Screen';
+  static const String settingsScreen = 'Settings Screen';
+  static const String home = 'Home';
+  static const String watchList = 'WarchList';
+  static const String settings = 'Settings';
+  static const String searchForSym = 'Search for symbols';
+  
   static const String rupeeSymbol = '\u20B9';
   static const String oops = 'oops';
   static const String retry = 'retry';
@@ -22,9 +30,10 @@ sealed class AppConstants {
   static const String addWatchlist = 'add WatchList';
   static const String enterWatchlistName = 'Enter watchlist name';
   static const String modify = 'Modify';
-  
-  
+  static const String search = 'Search & add';
+  static const String Search = 'Search Symbols';
 
- static final watchListRegExp = RegExp('[0-9a-zA-Z- ]');
+  static const int WatchListLimit = 10;
+  static final watchListRegExp = RegExp('[0-9a-zA-Z- ]');
 
 }
